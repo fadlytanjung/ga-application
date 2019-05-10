@@ -1,0 +1,35 @@
+.wrap-dashboard {
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.btn-rounded{
+    width:200px;
+    height: 200px;
+    border-radius: 90%;
+}
+
+input.no-bor:focus{
+    border-color: lightblue !important;
+}
+
+.margin0{
+    margin:0px;
+}
+
+.dark-color{
+    background-color:#173F5F;
+    color:#ffffff;
+}
+
+.medium-color{
+    background-color:#20639B;
+    color:#ffffff;
+}
+
+.heavy-color{
+    background-color:#3CAEA3;
+    color:#ffffff;
+}

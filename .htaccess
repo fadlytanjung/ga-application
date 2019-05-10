@@ -1,0 +1,20 @@
+RewriteEngine on
+ 
+##
+# Baris di bawah ini untuk mengignore file atau folder supaya tidak di rewrite
+# dengan index.php, apabila anda memiliki folder atau file yang tidak sesuai
+# dengan line di bawah ini silahkan edit saja
+#
+# Contohnya
+#
+# RewriteCond $1 !^(index\.php|css|robots\.txt|images|js|upload)
+#
+##
+RewriteCond $1 !^(index\.php|assets|Escpos|css|images|img|js|robots\.txt)
+ 
+##
+# Karena localhost direktori rootnya adalah htdocs, sedangkan folder codeigniter
+# berada di dalam host tersebut maka perlu di tambahkan path codeigniter di dalam
+# rewrite rule nya
+##
+RewriteRule ^(.*)$ index.php/$1 [L]
