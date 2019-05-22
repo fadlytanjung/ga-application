@@ -22,13 +22,72 @@ class Dashboard extends CI_Controller {
     public function input_barang()
 	{
         $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
-        $data['stok_barang'] = $this->Ga_model->getAllData('tbl_ga_stok')->result_array();
+        $data['stok_barang'] = $this->Ga_model->getUnlocatedStock()->result_array();
+    
         $this->load->view('templates/header');
         $this->load->view('ga_input_barang',$data);
         $this->load->view('templates/footer');
         $this->load->view('barang/input_barang_ajax');
-        $this->load->view('barang/input_stok_ajax');
+    
         
+    }
+
+    public function input_barang_create(){
+
+        $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
+
+        if($post = $this->input->post()){
+            $post = $post['stok'];
+            $stok = $this->Ga_model->generateID()->row();
+         
+            $data_stok = [
+                'id_stok' => $stok->id,
+                'tanggal_masuk' => $post['tanggal_masuk'],
+                'jam' => $post['jam']
+            ];
+            if(!$this->Ga_model->InsertDataJson("tbl_ga_stok",$data_stok)){
+                echo "gagal insert stok";die;
+            }
+            for ($i=0; $i< count($post['id_barang']); $i++){
+                $detail_stok = [
+                    'id_stok' => $stok->id,
+                    'id_barang' => $post['id_barang'][$i],
+                    'jumlah' => $post['jumlah'][$i]
+                ];
+
+                if(!$this->Ga_model->InsertDataJson("tbl_ga_stok_detail",$detail_stok)){
+                    echo "gagal insert detail stok";die;
+                }
+
+            }
+         
+        }
+        $this->load->view('templates/header');
+        $this->load->view('ga_input_barang_create', $data);
+        $this->load->view('templates/footer');
+        $this->load->view('barang/input_stok_ajax');
+    }   
+
+    public function input_barang_create_part(){
+
+        $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
+        $this->load->view('ga_input_barang_create_part', $data);
+    } 
+
+    
+    public function generate_lokasi_penyimpanan(){
+        $stokFm = $this->Ga_model->getUnlocatedStock2('FM')->result_array();
+        $stokSm = $this->Ga_model->getUnlocatedStock2('SM')->result_array();
+
+        if($stokFm){
+            $availableFmRack = $this->Ga_model->getNewRack('FM')->result_array();
+            $availableFmRack2 = $this->Ga_model->getAvailRack('FM')->result_array();
+           
+        }
+
+        if($stokSm){
+            $availableSmRack = $this->Ga_model->getNewRack('SM')->result_array();
+        }
     }
 
     public function input_barang_process()
@@ -37,8 +96,17 @@ class Dashboard extends CI_Controller {
         
         $data = json_decode($this->input->post('sendData'));
 
-        $insert = $this->Ga_model->InsertDataJson("tbl_ga_barang",$data);
+        $stok = $this->Ga_model->generateID()->result();
+        $data_stok = [
+            'id_stok' => $stok->id,
+            'tanggal_masuk' => $data['tanggal_masuk'],
+            'jam' => $data['jam']
+        ];
+        $insert = $this->Ga_model->InsertDataJson("tbl_ga_barang",$data_stok);
         if($insert){
+            $detail_stok = [
+                
+            ];
             $response = array(
                 "code"=>200,
                 "message"=>"Data berhasil di tambah!"

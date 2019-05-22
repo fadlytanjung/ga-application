@@ -99,7 +99,9 @@
     $(document).ready(function() {
         $('#example').DataTable();
     });
-    
+    $(document).ready(function() {
+        $('#stokbarang').DataTable();
+    });
 </script>
 
 
