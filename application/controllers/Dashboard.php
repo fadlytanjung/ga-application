@@ -78,15 +78,52 @@ class Dashboard extends CI_Controller {
     public function generate_lokasi_penyimpanan(){
         $stokFm = $this->Ga_model->getUnlocatedStock2('FM')->result_array();
         $stokSm = $this->Ga_model->getUnlocatedStock2('SM')->result_array();
-
+    
         if($stokFm){
             $availableFmRack = $this->Ga_model->getNewRack('FM')->result_array();
             $availableFmRack2 = $this->Ga_model->getAvailRack('FM')->result_array();
-           
+            $availableFmRack3 = [];
+
+          
+            $all_racks = [];
+            foreach($availableFmRack2 as $rack){
+                if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
+                    $availableFmRack3[] = [ 
+                        'id_rak' => $rack['id_rak'],
+                        'panajang' => $rack['panjang'],
+                        'lebar' => $rack['lebar'],
+                        'tinggi' => $rack['tinggi'],
+                        'zona' => $rack['zona']
+                    ];
+              
+                } 
+                $all_racks[] = $rack['id_rak'];
+            }
+            array_push($availableFmRack,$availableFmRack3);   
         }
 
         if($stokSm){
             $availableSmRack = $this->Ga_model->getNewRack('SM')->result_array();
+            $availableSmRack2 = $this->Ga_model->getAvailRack('SM')->result_array();
+            $availableSmRack3 = [];
+
+          
+            $all_racks = [];
+            foreach($availableSmRack2 as $rack){
+                if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
+                    $availableSmRack3[] = [ 
+                        'id_rak' => $rack['id_rak'],
+                        'panajang' => $rack['panjang'],
+                        'lebar' => $rack['lebar'],
+                        'tinggi' => $rack['tinggi'],
+                        'zona' => $rack['zona']
+                    ];       
+                }
+                $all_racks[] = $rack['id_rak'];
+            }  
+            array_push($availableSmRack,$availableSmRack3);
+
+     
         }
     }
 

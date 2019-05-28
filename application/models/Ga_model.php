@@ -34,7 +34,7 @@ class Ga_model extends CI_Model {
     public function getUnlocatedStock(){
         return $this->db->where('id_rak', NULL)
                 ->join('tbl_ga_stok_detail tgsd', 'tgs.id_stok=tgsd.id_stok')
-                ->join('tbl_ga_stok_rak tgsr', 'tgsd.stok_detail_id=tgsr.stok_detail_id')
+                ->join('tbl_ga_stok_rak tgsr', 'tgsd.stok_detail_id=tgsr.stok_detail_id','left')
                 ->get('tbl_ga_stok tgs');
     }
 
@@ -42,14 +42,22 @@ class Ga_model extends CI_Model {
         return $this->db->select('*')
                     ->from('tbl_ga_barang tgb')
                     ->join('tbl_ga_stok_detail tgsd', 'tgb.id_barang=tgsd.id_barang')
-                    ->join('tbl_ga_stok tgs', 'tgsd.id_stok=tgs.id_stok' )
+                    ->join('tbl_ga_stok tgs', 'tgsd.id_stok=tgs.id_stok') 
+                    ->join('tbl_ga_stok_rak tgsr', 'tgsd.stok_detail_id=tgsr.stok_detail_id', 'left')
                     ->where('id_rak', NULL)
                     ->where('type', $type)
                     ->get();
     }
 
     public function getNewRack($type){
-        return $this->db->query("SELECT * FROM tbl_ga_rak  WHERE id_rak NOT IN (SELECT id_rak FROM tbl_ga_stok WHERE id_rak != NULL) AND zona='".$type."'");
+        return $this->db->query("SELECT * FROM tbl_ga_rak  
+        WHERE id_rak NOT IN (SELECT id_rak FROM tbl_ga_stok_rak) AND zona='".$type."'");
     }
 
+    public function getAvailRack($type){
+        return $this->db->query("SELECT tgsr.id_rak, tgsr.jumlah  AS jumlah, SUM(tgbk.jumlah) AS jumlah_keluar, panjang, lebar, tinggi, zona FROM tbl_ga_stok_rak tgsr
+                                LEFT JOIN tbl_ga_barang_keluar tgbk ON tgsr.stok_rak_id=tgbk.stok_rak_id
+                                LEFT JOIN tbl_ga_rak tbr ON tbr.id_rak=tgsr.id_rak
+                                GROUP BY tgsr.stok_rak_id ORDER BY tgsr.stok_rak_id DESC");
+    }
 }
