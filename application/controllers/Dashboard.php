@@ -78,7 +78,7 @@ class Dashboard extends CI_Controller {
     public function generate_lokasi_penyimpanan(){
         $stokFm = $this->Ga_model->getUnlocatedStock2('FM')->result_array();
         $stokSm = $this->Ga_model->getUnlocatedStock2('SM')->result_array();
-    
+     
         if($stokFm){
             $availableFmRack = $this->Ga_model->getNewRack('FM')->result_array();
             $availableFmRack2 = $this->Ga_model->getAvailRack('FM')->result_array();
@@ -100,6 +100,36 @@ class Dashboard extends CI_Controller {
                 $all_racks[] = $rack['id_rak'];
             }
             array_push($availableFmRack,$availableFmRack3);   
+         
+            //masukkan barang ke rak
+            for($i=0;$i< count($stokFm);$i++){
+                $fm = $stokFm[$i];
+                $rack_keys = [];
+                for($j=0; $j<count($availableFmRack);$j++){
+                    $rack = $availableFmRack[$j];
+
+                    $x = floor($rack['panjang']/$fm['panjang']);
+                    $y = floor($rack['lebar']/$fm['lebar']);
+                    $z = floor($rack['tinggi']/$fm['tinggi']);
+
+                    if($y){
+                        $total = $x*$y*$z;
+
+                        $fm['total']-=$total;
+                        $rack_keys[] = $j; 
+                     
+                        if($fm['total']<=0){
+                           break;
+                        } 
+                      
+                    }     
+                }
+
+                foreach($rack_keys as $key){
+                    unset($availableFmRack[$key]);
+                }
+                var_dump($availableFmRack);die;
+            }
         }
 
         if($stokSm){
@@ -125,6 +155,7 @@ class Dashboard extends CI_Controller {
 
      
         }
+
     }
 
     public function input_barang_process()
@@ -336,8 +367,9 @@ class Dashboard extends CI_Controller {
 
     public function penempatan()
 	{
+        $data['stok_barang'] = $this->Ga_model->getUnlocatedStock()->result_array();
         $this->load->view('templates/header');
-        $this->load->view('ga_penempatan');
+        $this->load->view('ga_penempatan', $data);
         $this->load->view('templates/footer');
 	}
 }
