@@ -76,85 +76,124 @@ class Dashboard extends CI_Controller {
 
     
     public function generate_lokasi_penyimpanan(){
-        $stokFm = $this->Ga_model->getUnlocatedStock2('FM')->result_array();
-        $stokSm = $this->Ga_model->getUnlocatedStock2('SM')->result_array();
-     
-        if($stokFm){
-            $availableFmRack = $this->Ga_model->getNewRack('FM')->result_array();
-            $availableFmRack2 = $this->Ga_model->getAvailRack('FM')->result_array();
-            $availableFmRack3 = [];
 
-          
-            $all_racks = [];
-            foreach($availableFmRack2 as $rack){
-                if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
-                    $availableFmRack3[] = [ 
-                        'id_rak' => $rack['id_rak'],
-                        'panajang' => $rack['panjang'],
-                        'lebar' => $rack['lebar'],
-                        'tinggi' => $rack['tinggi'],
-                        'zona' => $rack['zona']
-                    ];
+        $types = ['FM', 'SM'];
+        $generation = 10;
+        foreach($types as $type){
+
+            $stok = $this->Ga_model->getUnlocatedStock2($type)->result_array();
+            
+            if($stok){
+                $availableFmRack = $this->Ga_model->getNewRack($type)->result_array();
+                $availableFmRack2 = $this->Ga_model->getAvailRack($type)->result_array();
+                $availableFmRack3 = [];
+                $population = [];
+               
+                $all_racks = [];
+                foreach($availableFmRack2 as $rack){
+                    if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
+                       
+                        $availableFmRack3[] = [ 
+                            'id_rak' => $rack['id_rak'],
+                            'panajang' => $rack['panjang'],
+                            'lebar' => $rack['lebar'],
+                            'tinggi' => $rack['tinggi'],
+                            'zona' => $rack['zona']
+                        ];
+                       
+                    } 
+                    $all_racks[] = $rack['id_rak'];
+                }
+                if($availableFmRack3)
+                    array_push($availableFmRack,$availableFmRack3);   
               
-                } 
-                $all_racks[] = $rack['id_rak'];
-            }
-            array_push($availableFmRack,$availableFmRack3);   
-         
-            //masukkan barang ke rak
-            for($i=0;$i< count($stokFm);$i++){
-                $fm = $stokFm[$i];
-                $rack_keys = [];
-                for($j=0; $j<count($availableFmRack);$j++){
-                    $rack = $availableFmRack[$j];
-
-                    $x = floor($rack['panjang']/$fm['panjang']);
-                    $y = floor($rack['lebar']/$fm['lebar']);
-                    $z = floor($rack['tinggi']/$fm['tinggi']);
-
-                    if($y){
-                        $total = $x*$y*$z;
-
-                        $fm['total']-=$total;
-                        $rack_keys[] = $j; 
+                for($c=0;$c<$generation;$c++){
+                   
+                    //random raknya
+                    $random_rack = $availableFmRack;
+                    shuffle($random_rack);
+                   
+                    //masukkan barang ke rak
+                    $temp_pupulation = [];
+                    for($i=0;$i< count($stok);$i++){
+                        $fm = $stok[$i];
                      
-                        if($fm['total']<=0){
-                           break;
-                        } 
+                        $rack_keys = [];
+                       
+                        foreach($random_rack as $key => $rack){
+                          
+                            $x = floor($rack['panjang']/$fm['panjang']);
+                            $y = floor($rack['lebar']/$fm['lebar']);
+                            $z = floor($rack['tinggi']/$fm['tinggi']);
+        
+                            if($y){
+                                $total = $x*$y*$z;
+                               
+                                $fm['total']-=$total;
+                               
+                                $rack_keys[] = 
+                                    [
+                                     'key' =>   $key,
+                                     'jumlah' => $fm['total'] >=0 ? $total : $total+$fm['total']
+                                    ];
+                                
+                                if($fm['total']<=0){                          
+                                break;
+                                } 
+                            
+                            }     
+                        }
+                        $rack_choosen = [];
+                        foreach($rack_keys as $key){
+                            $rack_choosen[] = [
+                                'ids' => $random_rack[$key['key']]['id_rak'],
+                                'jumlah' => $key['jumlah']
+                            ];
+                            unset($random_rack[$key['key']]);
+                        }
+                        $temp_pupulation[] = [
+                            'racks' => $rack_choosen,
+                            'id_barang' => $fm['id_barang'],
+                        ];
                       
-                    }     
+                    }
+                    $population[] = $temp_pupulation;
+                    
                 }
 
-                foreach($rack_keys as $key){
-                    unset($availableFmRack[$key]);
-                }
-                var_dump($availableFmRack);die;
+               var_dump($population);
+             
             }
         }
+        
+        
 
-        if($stokSm){
-            $availableSmRack = $this->Ga_model->getNewRack('SM')->result_array();
-            $availableSmRack2 = $this->Ga_model->getAvailRack('SM')->result_array();
-            $availableSmRack3 = [];
+
+        
+
+        // if($stokSm){
+        //     $availableSmRack = $this->Ga_model->getNewRack('SM')->result_array();
+        //     $availableSmRack2 = $this->Ga_model->getAvailRack('SM')->result_array();
+        //     $availableSmRack3 = [];
 
           
-            $all_racks = [];
-            foreach($availableSmRack2 as $rack){
-                if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
-                    $availableSmRack3[] = [ 
-                        'id_rak' => $rack['id_rak'],
-                        'panajang' => $rack['panjang'],
-                        'lebar' => $rack['lebar'],
-                        'tinggi' => $rack['tinggi'],
-                        'zona' => $rack['zona']
-                    ];       
-                }
-                $all_racks[] = $rack['id_rak'];
-            }  
-            array_push($availableSmRack,$availableSmRack3);
+        //     $all_racks = [];
+        //     foreach($availableSmRack2 as $rack){
+        //         if($rack['jumlah']-$rack['jumlah_keluar']==0 && !in_array($rack['id_rak'], $all_racks)) {
+        //             $availableSmRack3[] = [ 
+        //                 'id_rak' => $rack['id_rak'],
+        //                 'panajang' => $rack['panjang'],
+        //                 'lebar' => $rack['lebar'],
+        //                 'tinggi' => $rack['tinggi'],
+        //                 'zona' => $rack['zona']
+        //             ];       
+        //         }
+        //         $all_racks[] = $rack['id_rak'];
+        //     }  
+        //     array_push($availableSmRack,$availableSmRack3);
 
      
-        }
+        // }
 
     }
 
