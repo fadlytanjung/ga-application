@@ -28,7 +28,7 @@
                             <td ><?php if($row['id_rak']==""){echo"Not Set";}?></td>
                             <td ><?=$row['tanggal_masuk'];?></td>
                             <td ><?=$row['jam'];?></td>
-                            <td ><?=$row['jumlah'];?> dus</td>
+                            <td ><?=$row['total'];?> dus</td>
                             <td >
                                 <button type="button" class="btn btn-warning"
                                     data-toggle="modal" data-target="#edit-data-stok" 
@@ -74,7 +74,7 @@
                             <td ><?php if($row['id_rak']==""){echo"Not Set";}?></td>
                             <td ><?=$row['tanggal_masuk'];?></td>
                             <td ><?=$row['jam'];?></td>
-                            <td ><?=$row['jumlah'];?> dus</td>
+                            <td ><?=$row['total'];?> dus</td>
                            
                         </tr>
                     <?php }?>

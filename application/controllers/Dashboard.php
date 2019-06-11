@@ -52,7 +52,7 @@ class Dashboard extends CI_Controller {
                 $detail_stok = [
                     'id_stok' => $stok->id,
                     'id_barang' => $post['id_barang'][$i],
-                    'jumlah' => $post['jumlah'][$i]
+                    'total' => $post['jumlah'][$i]
                 ];
 
                 if(!$this->Ga_model->InsertDataJson("tbl_ga_stok_detail",$detail_stok)){
@@ -161,8 +161,9 @@ class Dashboard extends CI_Controller {
                     
                 }
 
-               var_dump($population);
-             
+            //    var_dump($population);
+            header('Content-Type:application/json');
+            echo json_encode($population,JSON_PRETTY_PRINT);
             }
         }
         
@@ -329,6 +330,7 @@ class Dashboard extends CI_Controller {
     public function input_rak()
 	{
         $data['rak'] = $this->Ga_model->getAllData('tbl_ga_rak')->result_array();
+      
         $this->load->view('templates/header');
         $this->load->view('ga_input_rak',$data);
         $this->load->view('templates/footer');
@@ -407,6 +409,7 @@ class Dashboard extends CI_Controller {
     public function penempatan()
 	{
         $data['stok_barang'] = $this->Ga_model->getUnlocatedStock()->result_array();
+    
         $this->load->view('templates/header');
         $this->load->view('ga_penempatan', $data);
         $this->load->view('templates/footer');

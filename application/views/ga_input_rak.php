@@ -57,7 +57,7 @@
                         <tr>
                             <td><?=$no+=1;?></td>
                             <td><?=$row['id_rak'];?></td>
-                            <td ><?$row['panjang'];?> cm</td>
+                            <td ><?=$row['panjang'];?> cm</td>
                             <td ><?=$row['lebar'];?> cm</td>
                             <td ><?=$row['tinggi'];?> cm</td>
                             <td ><?=$row['zona'];?></td>
