@@ -1,17 +1,20 @@
 <div class="limiter">
 		<div class="container-login100">
             
-
+            <a href="<?=base_url()?>dashboard"><button type="button" class="btn btn-primary" 
+             style="position:absolute;left:10px;top:10px;">
+             Kembali
+            </button></a>
        
             <div class='col-md-8 p-t-50'>
             <h3 class='text-center p-b-20'>Data Barang</h3>
-            <div class='float-left'>
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-success" 
-                        data-toggle="modal" data-target="#exampleModal">
-                        Master Barang
-                        </button>
-                    </div>
+            
+              <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success" 
+              data-toggle="modal" data-target="#exampleModal">
+              Master Barang
+            </button><br><br>
+            
             <table id="example" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>

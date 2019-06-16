@@ -1,5 +1,9 @@
 <div class="limiter">
 		<div class="container-login100">
+        <a href="<?=base_url()?>dashboard"><button type="button" class="btn btn-primary" 
+             style="position:absolute;left:10px;top:10px;">
+             Kembali
+            </button></a>
             <h1 class='margin0'>Masukkan Detail Rak</h1>
             <div class="wrap-dashboard p-l-55 p-r-55 p-b-54 row">
                 <div class='col-md-3'></div>

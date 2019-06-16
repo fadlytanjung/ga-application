@@ -1,33 +1,3 @@
-<script type='text/javascript'>
-    $("#idForm").submit(function(e) {
-
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-
-    var values = {};
-    $('.activeInput').each(function() {
-        values[this.name] = this.value;
-    });
-
-    $.ajax({
-        url: '<?=base_url()?>dashboard/input_barang_process',
-        data: {sendData: JSON.stringify(values)}, // serializes the form's elements.
-        type : "POST",
-        cache: false,
-        dataType : "json",
-        success : function(data) {
-            console.log(data)
-            $("#exampleModal").modal('hide');
-            $("#body").load('<?=base_url()?>dashboard/input_barang');
-        },
-        error : function(data) {
-            console.log('Maaf terjadi kesalahan!')
-        }
-    });
-
-
-});
-</script>
-
 <!---Update Ajax-->
 <script type='text/javascript'>
     $('#edit-data').on('show.bs.modal', function (event) {
@@ -78,7 +48,6 @@
     {
         if(confirm('Yakin ingin menghapus data?'))
         {
-            
             $.ajax({
             url: '<?=base_url()?>dashboard/hapus_barang_process/'+id+'/'+type,
                 type : "POST",
@@ -88,7 +57,6 @@
                 },
                 error : function(data) {
                     console.log('Maaf terjadi kesalahan!')
-                    location.reload();
                 }
             });
     
@@ -98,9 +66,6 @@
 </script>
 
 <script type='text/javascript'>
-    $(document).ready(function() {
-        $('#example').DataTable();
-    });
     $(document).ready(function() {
         $('#stokbarang').DataTable();
     });

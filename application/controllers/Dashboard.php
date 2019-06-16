@@ -204,17 +204,18 @@ class Dashboard extends CI_Controller {
         
         $data = json_decode($this->input->post('sendData'));
 
-        $stok = $this->Ga_model->generateID()->result();
-        $data_stok = [
-            'id_stok' => $stok->id,
-            'tanggal_masuk' => $data['tanggal_masuk'],
-            'jam' => $data['jam']
-        ];
-        $insert = $this->Ga_model->InsertDataJson("tbl_ga_barang",$data_stok);
+        // $stok = $this->Ga_model->generateID()->result_array();
+        // $uuid = $stok[0]['id'];
+        // $data_stok = array(
+        //     'id_stok' => $stok->id,
+        //     'tanggal_masuk' => $data['tanggal_masuk'],
+        //     'jam' => $data['jam']
+        // );
+        $insert = $this->Ga_model->InsertDataJson("tbl_ga_barang",$data);
         if($insert){
-            $detail_stok = [
+            // $detail_stok = [
                 
-            ];
+            // ];
             $response = array(
                 "code"=>200,
                 "message"=>"Data berhasil di tambah!"
@@ -311,6 +312,7 @@ class Dashboard extends CI_Controller {
             $column = 'id_barang';
         }
         $delete = $this->Ga_model->DeleteData($table,$id,$column);
+        
         if($delete){
             $response = array(
                 "code"=>200,
@@ -413,5 +415,6 @@ class Dashboard extends CI_Controller {
         $this->load->view('templates/header');
         $this->load->view('ga_penempatan', $data);
         $this->load->view('templates/footer');
+        $this->load->view('barang/input_barang_stok_ajax');
 	}
 }

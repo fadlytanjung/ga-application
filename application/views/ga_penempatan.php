@@ -1,6 +1,9 @@
 <div class="limiter">
 		<div class="container-login100" >
-            
+        <a href="<?=base_url()?>dashboard"><button type="button" class="btn btn-primary" 
+             style="position:absolute;left:10px;top:10px;">
+             Kembali
+            </button></a>
         <div class='col-md-8'>
             <h3 class='text-center p-b-20'>Barang Belum Ditempatkan</h3>
             <a href="<?=base_url('dashboard/input_barang_create')?>" class="btn btn-primary">Input Stok</a>
@@ -8,6 +11,7 @@
             <?php if($stok_barang){ ?>
                 <a href="<?=base_url('dashboard/generate_lokasi_penyimpanan')?>" class="btn btn-warning">Generate Lokasi Penyimpanan</a>
             <?php } ?>
+            <br><br>
             <table id="stokbarang" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
@@ -17,7 +21,7 @@
                         <th scope="col" >Tanggal Masuk</th>
                         <th scope="col" >Jam</th>
                         <th scope="col" >Jumlah</th>
-                        <th scope="col">Aksi</th>
+                        <!-- <th scope="col">Aksi</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -29,7 +33,7 @@
                             <td ><?=$row['tanggal_masuk'];?></td>
                             <td ><?=$row['jam'];?></td>
                             <td ><?=$row['total'];?> dus</td>
-                            <td >
+                            <!-- <td >
                                 <button type="button" class="btn btn-warning"
                                     data-toggle="modal" data-target="#edit-data-stok" 
                                     data-id_stok="<?=$row['id_stok'];?>"
@@ -43,7 +47,7 @@
                                     onclick="delete_data('<?=$row['id_stok'];?>','stok')"
                                     >
                                     <i class="fa fa-trash"></i></button>
-                            </td>
+                            </td> -->
                         </tr>
                     <?php }?>
                 </tbody>
