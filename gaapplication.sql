@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.6.6deb5
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 10, 2019 at 06:43 PM
--- Server version: 10.1.16-MariaDB
--- PHP Version: 7.0.9
+-- Host: localhost:3306
+-- Generation Time: Jun 30, 2019 at 03:19 AM
+-- Server version: 5.7.26-0ubuntu0.18.04.1
+-- PHP Version: 7.2.19-0ubuntu0.18.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -40,8 +40,9 @@ CREATE TABLE `tbl_ga_barang` (
 --
 
 INSERT INTO `tbl_ga_barang` (`id_barang`, `nama_barang`, `panjang`, `lebar`, `tinggi`, `type`) VALUES
-('B-1', 'Coki Coki', 100, 50, 40, 'FM'),
-('B-2', 'Indomie', 95, 60, 40, 'FM');
+('B-1', 'Pottatoes', 23, 50, 100, 'FM'),
+('B-2', 'Ikan Gurami', 10, 15, 10, 'FM'),
+('B-3', 'Indomie', 20, 50, 15, 'SM');
 
 -- --------------------------------------------------------
 
@@ -75,9 +76,9 @@ CREATE TABLE `tbl_ga_rak` (
 --
 
 INSERT INTO `tbl_ga_rak` (`id_rak`, `panjang`, `lebar`, `tinggi`, `zona`) VALUES
-('RK-1', 1000, 600, 500, 'FM'),
-('RK-2', 800, 600, 700, 'FM'),
-('RK-3', 600, 600, 600, 'FM');
+('RK-1', 400, 300, 500, 'FM'),
+('RK-2', 800, 600, 700, 'SM'),
+('RK-3', 300, 200, 200, 'FM');
 
 -- --------------------------------------------------------
 
@@ -91,15 +92,6 @@ CREATE TABLE `tbl_ga_stok` (
   `jam` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `tbl_ga_stok`
---
-
-INSERT INTO `tbl_ga_stok` (`id_stok`, `tanggal_masuk`, `jam`) VALUES
-('5', '2019-01-01', '15:00:00'),
-('51305849-7c64-11e9-96d7-88d7f656c446', '2019-10-10', '10:10:00'),
-('6', '2019-01-01', '15:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -112,14 +104,6 @@ CREATE TABLE `tbl_ga_stok_detail` (
   `id_barang` varchar(100) NOT NULL,
   `total` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `tbl_ga_stok_detail`
---
-
-INSERT INTO `tbl_ga_stok_detail` (`stok_detail_id`, `id_stok`, `id_barang`, `total`) VALUES
-(1, '51305849-7c64-11e9-96d7-88d7f656c446', 'B-1', 2000),
-(2, '51305849-7c64-11e9-96d7-88d7f656c446', 'B-2', 50);
 
 -- --------------------------------------------------------
 
@@ -192,12 +176,12 @@ ALTER TABLE `tbl_ga_barang_keluar`
 -- AUTO_INCREMENT for table `tbl_ga_stok_detail`
 --
 ALTER TABLE `tbl_ga_stok_detail`
-  MODIFY `stok_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `stok_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 --
 -- AUTO_INCREMENT for table `tbl_ga_stok_rak`
 --
 ALTER TABLE `tbl_ga_stok_rak`
-  MODIFY `stok_rak_id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `stok_rak_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 --
 -- Constraints for dumped tables
 --
@@ -213,7 +197,7 @@ ALTER TABLE `tbl_ga_barang_keluar`
 --
 ALTER TABLE `tbl_ga_stok_detail`
   ADD CONSTRAINT `tbl_ga_stok_detail_ibfk_3` FOREIGN KEY (`id_barang`) REFERENCES `tbl_ga_barang` (`id_barang`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tbl_ga_stok_detail_ibfk_4` FOREIGN KEY (`id_stok`) REFERENCES `tbl_ga_stok` (`id_stok`);
+  ADD CONSTRAINT `tbl_ga_stok_detail_ibfk_4` FOREIGN KEY (`id_stok`) REFERENCES `tbl_ga_stok` (`id_stok`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tbl_ga_stok_rak`

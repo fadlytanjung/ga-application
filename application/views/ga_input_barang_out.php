@@ -2,7 +2,7 @@
              style="position:absolute;left:10px;top:10px;">
              Kembali
             </button></a>
-    <h2 class='margin0 text-center'>Input Barang Stok</h2>
+            <h2 class='margin0 text-center'>Input Barang Keluar</h2>
             <div class="wrap-dashboard p-l-55 p-r-55 p-b-54 row p-t-20">
                 <div class='col-md-3'></div>
                 <div class='col-md-6'>

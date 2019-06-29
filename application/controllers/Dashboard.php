@@ -74,18 +74,62 @@ class Dashboard extends CI_Controller {
         $this->load->view('ga_input_barang_create_part', $data);
     } 
 
+
+    public function input_barang_out(){
+
+        $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
+
+        if($post = $this->input->post()){
+            $post = $post['stok'];
+            $stok = $this->Ga_model->generateID()->row();
+         
+            $data_stok = [
+                'id_stok' => $stok->id,
+                'tanggal_masuk' => $post['tanggal_masuk'],
+                'jam' => $post['jam']
+            ];
+            if(!$this->Ga_model->InsertDataJson("tbl_ga_stok",$data_stok)){
+                echo "gagal insert stok";die;
+            }
+            for ($i=0; $i< count($post['id_barang']); $i++){
+                $detail_stok = [
+                    'id_stok' => $stok->id,
+                    'id_barang' => $post['id_barang'][$i],
+                    'total' => $post['jumlah'][$i]
+                ];
+
+                if(!$this->Ga_model->InsertDataJson("tbl_ga_stok_detail",$detail_stok)){
+                    echo "gagal insert detail stok";die;
+                }
+
+            }
+         
+        }
+        $this->load->view('templates/header');
+        $this->load->view('ga_input_barang_out', $data);
+        $this->load->view('templates/footer');
+        $this->load->view('barang/input_out_ajax');
+    }   
+
+    public function input_barang_out_part(){
+
+        $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
+        $this->load->view('ga_input_barang_out_part', $data);
+    }
+
     
     public function generate_lokasi_penyimpanan(){
 
         $types = ['FM', 'SM'];
-        $generation = 10;
+        $generation = 5;
         foreach($types as $type){
 
             $stok = $this->Ga_model->getUnlocatedStock2($type)->result_array();
-            
+           
             if($stok){
                 $availableFmRack = $this->Ga_model->getNewRack($type)->result_array();
                 $availableFmRack2 = $this->Ga_model->getAvailRack($type)->result_array();
+                
                 $availableFmRack3 = [];
                 $population = [];
                
@@ -103,38 +147,55 @@ class Dashboard extends CI_Controller {
                        
                     } 
                     $all_racks[] = $rack['id_rak'];
+                
                 }
                 if($availableFmRack3)
                     array_push($availableFmRack,$availableFmRack3);   
-              
+                
+                $vol_rack_available = 0;
+                foreach($availableFmRack as $key =>$rs){
+                    $vol_rack_available += floor($rs['panjang']*$rs['lebar']*$rs['tinggi']);
+                }
+                // print_r($vol_rack_available);
                 for($c=0;$c<$generation;$c++){
                    
                     //random raknya
                     $random_rack = $availableFmRack;
                     shuffle($random_rack);
-                   
                     //masukkan barang ke rak
                     $temp_pupulation = [];
+                    $total_vol_barang = 0;
+                    $total_vol_rack = 0;
                     for($i=0;$i< count($stok);$i++){
                         $fm = $stok[$i];
-                     
-                        $rack_keys = [];
                        
+                        $rack_keys = [];
+                        $vol_rack_available = 0;
+                        $stok_detail_id = $this->Ga_model->getStockDetailId($fm['id_stok']);
+                        // var_dump($stok_detail_id);die;
+                        foreach($availableFmRack as $key =>$rs){
+                            $vol_rack_available += floor($rs['panjang']*$rs['lebar']*$rs['tinggi']);
+                        }
+                        $vol_barang = (int)$fm['panjang']*(int)$fm['lebar']*(int)$fm['tinggi'];
+                        
                         foreach($random_rack as $key => $rack){
                           
                             $x = floor($rack['panjang']/$fm['panjang']);
                             $y = floor($rack['lebar']/$fm['lebar']);
                             $z = floor($rack['tinggi']/$fm['tinggi']);
-        
+                            $vol_rack = floor($rack['panjang']*$rack['lebar']*$rack['tinggi']);
+                            
                             if($y){
                                 $total = $x*$y*$z;
-                               
+                                
                                 $fm['total']-=$total;
-                               
+                                
                                 $rack_keys[] = 
                                     [
                                      'key' =>   $key,
-                                     'jumlah' => $fm['total'] >=0 ? $total : $total+$fm['total']
+                                     'jumlah' => $fm['total'] >=0 ? $total : $total+$fm['total'],
+                                     'vol_rack'=>$vol_rack,
+                                     'stok_detail_id'=>$stok_detail_id->stok_detail_id
                                     ];
                                 
                                 if($fm['total']<=0){                          
@@ -143,35 +204,82 @@ class Dashboard extends CI_Controller {
                             
                             }     
                         }
+                        
+                       
+                        
                         $rack_choosen = [];
                         foreach($rack_keys as $key){
+                            $vol_barang_s = $key['jumlah']*$vol_barang;
                             $rack_choosen[] = [
-                                'ids' => $random_rack[$key['key']]['id_rak'],
-                                'jumlah' => $key['jumlah']
+                                'id_rak' => $random_rack[$key['key']]['id_rak'],
+                                'jumlah' => $key['jumlah'],
+                                'stok_detail_id'=>$key['stok_detail_id']
+                                // 'vol_barang'=>$vol_barang_s,
+                                // 'vol_rack'=>$key['vol_rack'],
+                                // 'fitness_cost'=>$vol_barang_s/$vol_rack*100
                             ];
+                            $total_vol_rack+=$key['vol_rack'];
+                            $total_vol_barang+=$vol_barang_s;
                             unset($random_rack[$key['key']]);
+                            
+
                         }
-                        $temp_pupulation[] = [
-                            'racks' => $rack_choosen,
-                            'id_barang' => $fm['id_barang'],
-                        ];
-                      
+
+                        if(!empty($rack_choosen)){
+
+                            $temp_pupulation[] = [
+                                'racks' => $rack_choosen,
+                                'id_barang' => $fm['id_barang'],
+                                'fitnes_cost'=>$total_vol_barang/$total_vol_rack*100
+                                ];
+                            
+                            $vol_rack_available-=$total_vol_barang;
+                        }
+                        
+                        
                     }
                     $population[] = $temp_pupulation;
-                    
-                }
 
+                }
+            $keys='';
+            
+            $fcf = 0;
+            foreach($population as $key=>$val){ //untuk mengecek individu dengan fitnes cost terbaik
+                $fcs=0;
+                foreach($val as $v){
+                    $fcs+=$v['fitnes_cost'];
+                }
+                if($fcs>=$fcf){
+                    $fcf = $fcs;
+                    $keys = $key;
+                }else{
+                    $fcf = $fcf;
+                }
+            }
+            // print_r($population[$keys]);
+            $selected_individu = $population[$keys];
+
+            foreach($selected_individu as $data_insert){
+                $data_n = $data_insert['racks'];
+                
+                $data_n_p = [
+                    'id_rak'=>$data_n[0]['id_rak'],
+                    'jumlah'=>$data_n[0]['jumlah'],
+                    'stok_detail_id'=>$data_n[0]['stok_detail_id']
+                ];
+
+                
+                $this->Ga_model->InsertDataJson("tbl_ga_stok_rak",$data_n_p);
+            }
             //    var_dump($population);
-            header('Content-Type:application/json');
-            echo json_encode($population,JSON_PRETTY_PRINT);
+            // header('Content-Type:application/json');
+            // echo json_encode($selected_individu,JSON_PRETTY_PRINT);
+            $this->load->helper('url');
+            redirect('/dashboard/penempatan', 'refresh');
             }
         }
         
         
-
-
-        
-
         // if($stokSm){
         //     $availableSmRack = $this->Ga_model->getNewRack('SM')->result_array();
         //     $availableSmRack2 = $this->Ga_model->getAvailRack('SM')->result_array();
@@ -411,7 +519,8 @@ class Dashboard extends CI_Controller {
     public function penempatan()
 	{
         $data['stok_barang'] = $this->Ga_model->getUnlocatedStock()->result_array();
-    
+        $data['penempatan'] = $this->Ga_model->getPenempatan()->result_array();
+        // var_dump($data['penempatan']);die;
         $this->load->view('templates/header');
         $this->load->view('ga_penempatan', $data);
         $this->load->view('templates/footer');

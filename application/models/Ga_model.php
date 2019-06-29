@@ -30,6 +30,11 @@ class Ga_model extends CI_Model {
         return ($this->db->affected_rows() > 0) ? true : false; 
     }
 
+    public function getPenempatan(){
+        return $this->db->query("SELECT * FROM tbl_ga_stok_rak LEFT JOIN tbl_ga_stok_detail
+        ON tbl_ga_stok_rak.stok_detail_id=tbl_ga_stok_detail.stok_detail_id LEFT JOIN tbl_ga_stok
+        ON tbl_ga_stok_detail.id_stok=tbl_ga_stok.id_stok");
+    }
 
     public function getUnlocatedStock(){
         return $this->db->where('id_rak', NULL)
@@ -54,6 +59,10 @@ class Ga_model extends CI_Model {
         WHERE id_rak NOT IN (SELECT id_rak FROM tbl_ga_stok_rak) AND zona='".$type."'");
     }
 
+    public function getStockDetailId($stok_id){
+        return $this->db->query("SELECT stok_detail_id FROM tbl_ga_stok_detail 
+        WHERE id_stok='$stok_id'")->row();
+    }
     public function getAvailRack($type){
         return $this->db->query("SELECT tgsr.id_rak, tgsr.jumlah  AS jumlah, SUM(tgbk.jumlah) AS jumlah_keluar, panjang, lebar, tinggi, zona FROM tbl_ga_stok_rak tgsr
                                 LEFT JOIN tbl_ga_barang_keluar tgbk ON tgsr.stok_rak_id=tgbk.stok_rak_id
