@@ -77,36 +77,22 @@ class Dashboard extends CI_Controller {
 
     public function input_barang_out(){
 
-        $data['barang'] = $this->Ga_model->getAllData('tbl_ga_barang')->result_array();
-
+        $stok_rak = $this->Ga_model->getStockPerRack()->result_array();
+        foreach($stok_rak as $stok){
+            $barang_out = $this->Ga_model->getAmountOutStock($stok['stok_rak_id'])->row_array();
+            if($stok['jumlah']-$barang_out['jumlah']==0 || !$barang_out){
+                @$data['barang'][] = $stok;
+            }            
+        }        
         if($post = $this->input->post()){
-            $post = $post['stok'];
-            $stok = $this->Ga_model->generateID()->row();
-         
-            $data_stok = [
-                'id_stok' => $stok->id,
-                'tanggal_masuk' => $post['tanggal_masuk'],
-                'jam' => $post['jam']
-            ];
-            if(!$this->Ga_model->InsertDataJson("tbl_ga_stok",$data_stok)){
+            $post = $post['stok'];                                    
+            if(!$this->Ga_model->InsertDataJson("tbl_ga_barang_keluar",$post)){
                 echo "gagal insert stok";die;
-            }
-            for ($i=0; $i< count($post['id_barang']); $i++){
-                $detail_stok = [
-                    'id_stok' => $stok->id,
-                    'id_barang' => $post['id_barang'][$i],
-                    'total' => $post['jumlah'][$i]
-                ];
-
-                if(!$this->Ga_model->InsertDataJson("tbl_ga_stok_detail",$detail_stok)){
-                    echo "gagal insert detail stok";die;
-                }
-
-            }
+            }           
          
         }
         $this->load->view('templates/header');
-        $this->load->view('ga_input_barang_out', $data);
+        $this->load->view('ga_input_barang_out', @$data);
         $this->load->view('templates/footer');
         $this->load->view('barang/input_out_ajax');
     }   
@@ -525,5 +511,12 @@ class Dashboard extends CI_Controller {
         $this->load->view('ga_penempatan', $data);
         $this->load->view('templates/footer');
         $this->load->view('barang/input_barang_stok_ajax');
-	}
+    }
+    
+    public function barang_keluar()
+    {
+        $this->load->view('templates/header');
+        $this->load->view('ga_barang_keluar');
+        $this->load->view('templates/footer');
+    }
 }

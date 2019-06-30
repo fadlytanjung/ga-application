@@ -31,9 +31,9 @@ class Ga_model extends CI_Model {
     }
 
     public function getPenempatan(){
-        return $this->db->query("SELECT * FROM tbl_ga_stok_rak LEFT JOIN tbl_ga_stok_detail
+        return $this->db->query("SELECT *, SUM(tgbk.jumlah) AS jumlah_keluar, tbl_ga_stok_rak.jumlah AS jumlah_per_rak FROM tbl_ga_stok_rak LEFT JOIN tbl_ga_stok_detail
         ON tbl_ga_stok_rak.stok_detail_id=tbl_ga_stok_detail.stok_detail_id LEFT JOIN tbl_ga_stok
-        ON tbl_ga_stok_detail.id_stok=tbl_ga_stok.id_stok");
+        ON tbl_ga_stok_detail.id_stok=tbl_ga_stok.id_stok LEFT JOIN tbl_ga_barang_keluar tgbk ON tbl_ga_stok_rak.stok_rak_id=tgbk.stok_rak_id GROUP BY tbl_ga_stok_rak.stok_rak_id");
     }
 
     public function getUnlocatedStock(){
@@ -68,5 +68,16 @@ class Ga_model extends CI_Model {
                                 LEFT JOIN tbl_ga_barang_keluar tgbk ON tgsr.stok_rak_id=tgbk.stok_rak_id
                                 LEFT JOIN tbl_ga_rak tbr ON tbr.id_rak=tgsr.id_rak
                                 GROUP BY tgsr.stok_rak_id ORDER BY tgsr.stok_rak_id DESC");
+    }
+
+    public function getStockPerRack(){    
+        return $this->db->query("SELECT tgsr.stok_rak_id, tgsr.jumlah, tgsr.id_rak, tgsd.id_barang FROM tbl_ga_stok_rak tgsr 
+                                LEFT JOIN tbl_ga_stok_detail tgsd ON tgsd.stok_detail_id=tgsr.stok_detail_id
+                                LEFT JOIN tbl_ga_stok tgs ON tgsd.id_stok=tgs.id_stok");
+    }
+
+    public function getAmountOutStock($stok_rak_id){
+        return $this->db->query("SELECT SUM(jumlah) AS jumlah FROM tbl_ga_barang_keluar WHERE stok_rak_id='".$stok_rak_id."'
+                                GROUP BY stok_rak_id");
     }
 }

@@ -57,8 +57,8 @@
             
             <div class='col-md-8'>
             <h3 class='text-center p-b-20'>Penempatan Barang </h3>
-           
-            <table id="stokbarang" class="table table-striped table-bordered" style="width:100%">
+            <a href="<?=base_url('dashboard/barang_keluar')?>" class="btn btn-primary">Keluarkan barang</a>
+            <table id="penempatanbarang" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
                         <th scope="col">No</th>
@@ -67,7 +67,7 @@
                         <th scope="col" >Tanggal Masuk</th>
                         <th scope="col" >Jam</th>
                         <th scope="col" >Jumlah</th>
-                       
+                        <th scope="col" >Jumlah Keluar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,8 +82,8 @@
                                 }?></td>
                             <td ><?=$row['tanggal_masuk'];?></td>
                             <td ><?=$row['jam'];?></td>
-                            <td ><?=$row['total'];?> dus</td>
-                           
+                            <td ><?=$row['jumlah_per_rak'];?> dus</td>
+                            <td ><?=$row['jumlah_keluar'];?> dus</td>
                         </tr>
                     <?php }?>
                 </tbody>

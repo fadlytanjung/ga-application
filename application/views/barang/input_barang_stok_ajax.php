@@ -68,6 +68,7 @@
 <script type='text/javascript'>
     $(document).ready(function() {
         $('#stokbarang').DataTable();
+        $('#penempatanbarang').DataTable();
     });
 </script>
 
