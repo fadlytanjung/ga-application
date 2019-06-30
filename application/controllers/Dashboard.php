@@ -124,9 +124,9 @@ class Dashboard extends CI_Controller {
         $generation = 5;
         foreach($types as $type){
 
-            $stok = $this->Ga_model->getUnlocatedStock2($type)->result_array();
-           
+            $stok = $this->Ga_model->getUnlocatedStock2($type)->result_array();            
             if($stok){
+                
                 $availableFmRack = $this->Ga_model->getNewRack($type)->result_array();
                 $availableFmRack2 = $this->Ga_model->getAvailRack($type)->result_array();
                 
@@ -153,10 +153,12 @@ class Dashboard extends CI_Controller {
                     array_push($availableFmRack,$availableFmRack3);   
                 
                 $vol_rack_available = 0;
+                
                 foreach($availableFmRack as $key =>$rs){
                     $vol_rack_available += floor($rs['panjang']*$rs['lebar']*$rs['tinggi']);
                 }
                 // print_r($vol_rack_available);
+                
                 for($c=0;$c<$generation;$c++){
                    
                     //random raknya
@@ -167,12 +169,9 @@ class Dashboard extends CI_Controller {
                     $total_vol_barang = 0;
                     $total_vol_rack = 0;
                     for($i=0;$i< count($stok);$i++){
-                        $fm = $stok[$i];
-                       
+                        $fm = $stok[$i];                        
                         $rack_keys = [];
-                        $vol_rack_available = 0;
-                        $stok_detail_id = $this->Ga_model->getStockDetailId($fm['id_stok']);
-                        // var_dump($stok_detail_id);die;
+                        $vol_rack_available = 0;                       
                         foreach($availableFmRack as $key =>$rs){
                             $vol_rack_available += floor($rs['panjang']*$rs['lebar']*$rs['tinggi']);
                         }
@@ -195,7 +194,7 @@ class Dashboard extends CI_Controller {
                                      'key' =>   $key,
                                      'jumlah' => $fm['total'] >=0 ? $total : $total+$fm['total'],
                                      'vol_rack'=>$vol_rack,
-                                     'stok_detail_id'=>$stok_detail_id->stok_detail_id
+                                     'stok_detail_id'=>$fm['sd_id']
                                     ];
                                 
                                 if($fm['total']<=0){                          
@@ -241,6 +240,7 @@ class Dashboard extends CI_Controller {
                     $population[] = $temp_pupulation;
 
                 }
+         
             $keys='';
             
             $fcf = 0;

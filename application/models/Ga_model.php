@@ -44,7 +44,7 @@ class Ga_model extends CI_Model {
     }
 
     public function getUnlocatedStock2($type){
-        return $this->db->select('*')
+        return $this->db->select('*, tgsd.stok_detail_id as sd_id')
                     ->from('tbl_ga_barang tgb')
                     ->join('tbl_ga_stok_detail tgsd', 'tgb.id_barang=tgsd.id_barang')
                     ->join('tbl_ga_stok tgs', 'tgsd.id_stok=tgs.id_stok') 
