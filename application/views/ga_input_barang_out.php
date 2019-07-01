@@ -20,22 +20,23 @@
                     </div>
                     <div class="form-group">
                         <label >Rak</label>
-                        <select class="activeInputStok form-control" name='stok[stok_rak_id]' >
+                        <select class="activeInputStok form-control" name='stok[stok_rak_id]' id="pilih-rak">
+                            <option>-- Pilih Rak --</option>
                             <?php foreach($barang as $br){?>
-                            <option value='<?=$br['stok_rak_id'];?>'>
-                                <?=$br['id_rak'].' (Kode Barang : '.$br['id_barang'].' )';?>
+                            <option value='<?=$br['stok_rak_id'];?>' data-jumlah="<?=$br['total']?>">
+                                <?=$br['id_rak'].' (Kode Barang : '.$br['id_barang'].', Jumlah : '.$br['total'].' )';?>
                             </option>
                             <?php }?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label >Jumlah</label>
-                        <input type="number" name='stok[jumlah]' class="activeInputStok form-control no-bor" placeholder="Jumlah">
+                        <input type="number" id="jumlah-keluar" name='stok[jumlah]' class="activeInputStok form-control no-bor" placeholder="Jumlah">
                     </div>
                     
                     <div class="float-right">                    
                         <a href="<?=base_url()?>dashboard" class="btn btn-danger">Batal</a>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" id="submit">Submit</button>
                     </div>
                 </form>
                 </div>

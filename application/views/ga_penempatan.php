@@ -57,7 +57,7 @@
             
             <div class='col-md-8'>
             <h3 class='text-center p-b-20'>Penempatan Barang </h3>
-            <a href="<?=base_url('dashboard/barang_keluar')?>" class="btn btn-primary">Keluarkan barang</a>
+            <a href="<?=base_url('dashboard/input_barang_out')?>" class="btn btn-primary">Keluarkan barang</a>
             <table id="penempatanbarang" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>

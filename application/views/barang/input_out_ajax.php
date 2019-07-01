@@ -49,6 +49,22 @@
         $('#stokbarang').DataTable();
        
     });
+
+    var jumlah = 0
+
+    $('#pilih-rak').on('change', function(){
+        jumlah = $('option:selected', this).attr('data-jumlah');    
+    })
+
+    $('#jumlah-keluar').on('keyup', function(){
+        if($(this).val() > jumlah){
+            alert('Jumlah keluar melebihi stok yang ada')
+            $('#submit').prop('disabled', true)
+        }else{
+            $('#submit').prop('disabled', false)
+        }
+    })
+
     $('#new-form').on('click', function(e){
             e.preventDefault();
             $.get("<?=base_url('dashboard/input_barang_create_part')?>", function(data){

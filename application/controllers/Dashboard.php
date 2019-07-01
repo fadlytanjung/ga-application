@@ -79,11 +79,13 @@ class Dashboard extends CI_Controller {
 
         $stok_rak = $this->Ga_model->getStockPerRack()->result_array();
         foreach($stok_rak as $stok){
-            $barang_out = $this->Ga_model->getAmountOutStock($stok['stok_rak_id'])->row_array();
-            if($stok['jumlah']-$barang_out['jumlah']==0 || !$barang_out){
+            $barang_out = $this->Ga_model->getAmountOutStock($stok['stok_rak_id'])->row_array();        
+            if($stok['jumlah']-$barang_out['jumlah']>0 || !$barang_out){
+                $stok['total'] = $stok['jumlah']-$barang_out['jumlah'];
                 @$data['barang'][] = $stok;
             }            
         }        
+        
         if($post = $this->input->post()){
             $post = $post['stok'];                                    
             if(!$this->Ga_model->InsertDataJson("tbl_ga_barang_keluar",$post)){
